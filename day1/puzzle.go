@@ -16,6 +16,11 @@ func SolvePuzzle1(input string) int {
 	return l.getTotalDistance()
 }
 
+func SolvePuzzle2(input string) int {
+	l := NewLocations(input)
+	return l.getSimilarity()
+}
+
 func NewLocations(input string) (result Locations) {
 	lines := strings.Split(input, "\n")
 	for _, line := range lines {
@@ -42,6 +47,24 @@ func (l *Locations) getTotalDistance() (result int) {
 
 	for i, left := range l.left {
 		result += util.IntDiff(left, l.right[i])
+	}
+
+	return
+}
+
+func (l *Locations) getSimilarity() (result int) {
+	l.sort()
+
+	for _, left := range l.left {
+		counter := 0
+		for _, right := range l.right {
+			if left == right {
+				counter++
+			} else if left < right {
+				break
+			}
+		}
+		result += left * counter
 	}
 
 	return
