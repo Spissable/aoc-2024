@@ -11,7 +11,7 @@ type Reports struct {
 	Report []Report
 }
 
-func SolvePuzzle1(input string) int {
+func NewReports(input string) Reports {
 	lines := strings.Split(input, "\n")
 	reports := Reports{}
 	for _, line := range lines {
@@ -23,10 +23,38 @@ func SolvePuzzle1(input string) int {
 		reports.Report = append(reports.Report, report)
 	}
 
+	return reports
+}
+
+func SolvePuzzle1(input string) int {
+	reports := NewReports(input)
+
 	result := 0
 	for _, report := range reports.Report {
 		if report.isSafe() {
 			result++
+		}
+	}
+
+	return result
+}
+
+func SolvePuzzle2(input string) int {
+	reports := NewReports(input)
+
+	result := 0
+	for _, report := range reports.Report {
+		if report.isSafe() {
+			result++
+			continue
+		}
+
+		for i := range report {
+			damped := append(append(Report{}, report[:i]...), report[i+1:]...)
+			if damped.isSafe() {
+				result++
+				break
+			}
 		}
 	}
 
