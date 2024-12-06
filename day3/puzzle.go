@@ -3,6 +3,7 @@ package day3
 import (
 	"regexp"
 	"strconv"
+	"strings"
 )
 
 type Multiplication struct {
@@ -36,6 +37,16 @@ func NewCalc(input string) (result Calc) {
 
 func SolvePuzzle1(input string) int {
 	c := NewCalc(input)
+
+	return c.Sum()
+}
+
+func SolvePuzzle2(input string) int {
+	regex := `don't[(][)]([\s\S]*?)do[(][)]`
+	re := regexp.MustCompile(regex)
+	prefiltered := re.ReplaceAllString(input, "")
+
+	c := NewCalc(strings.Split(prefiltered, "don't()")[0])
 
 	return c.Sum()
 }
