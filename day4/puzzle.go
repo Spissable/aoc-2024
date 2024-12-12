@@ -96,3 +96,33 @@ func SolvePuzzle1(input string) (result int) {
 
 	return
 }
+
+func SolvePuzzle2(input string) (result int) {
+	base := NewCharCoords(input)
+
+	// center of the X-MAS
+	aCoords := base['A']
+	sCoords := base['S']
+	mCoords := base['M']
+	for _, a := range aCoords {
+		if slices.Contains(sCoords, Coord{LineNum: a.LineNum - 1, ElemNum: a.ElemNum + 1}) && slices.Contains(sCoords, Coord{LineNum: a.LineNum + 1, ElemNum: a.ElemNum + 1}) {
+			if slices.Contains(mCoords, Coord{LineNum: a.LineNum + 1, ElemNum: a.ElemNum - 1}) && slices.Contains(mCoords, Coord{LineNum: a.LineNum - 1, ElemNum: a.ElemNum - 1}) {
+				result++
+			}
+		} else if slices.Contains(sCoords, Coord{LineNum: a.LineNum - 1, ElemNum: a.ElemNum + 1}) && slices.Contains(sCoords, Coord{LineNum: a.LineNum - 1, ElemNum: a.ElemNum - 1}) {
+			if slices.Contains(mCoords, Coord{LineNum: a.LineNum + 1, ElemNum: a.ElemNum - 1}) && slices.Contains(mCoords, Coord{LineNum: a.LineNum + 1, ElemNum: a.ElemNum + 1}) {
+				result++
+			}
+		} else if slices.Contains(sCoords, Coord{LineNum: a.LineNum - 1, ElemNum: a.ElemNum - 1}) && slices.Contains(sCoords, Coord{LineNum: a.LineNum + 1, ElemNum: a.ElemNum - 1}) {
+			if slices.Contains(mCoords, Coord{LineNum: a.LineNum + 1, ElemNum: a.ElemNum + 1}) && slices.Contains(mCoords, Coord{LineNum: a.LineNum - 1, ElemNum: a.ElemNum + 1}) {
+				result++
+			}
+		} else if slices.Contains(sCoords, Coord{LineNum: a.LineNum + 1, ElemNum: a.ElemNum - 1}) && slices.Contains(sCoords, Coord{LineNum: a.LineNum + 1, ElemNum: a.ElemNum + 1}) {
+			if slices.Contains(mCoords, Coord{LineNum: a.LineNum - 1, ElemNum: a.ElemNum + 1}) && slices.Contains(mCoords, Coord{LineNum: a.LineNum - 1, ElemNum: a.ElemNum - 1}) {
+				result++
+			}
+		}
+	}
+
+	return
+}

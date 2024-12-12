@@ -15,3 +15,13 @@ func TestSolvePuzzle1(t *testing.T) {
 		t.Error(result)
 	}
 }
+
+func TestSolvePuzzle2(t *testing.T) {
+	input := util.ReadInput(4)
+
+	result := day4.SolvePuzzle2(input)
+
+	if result != 1925 {
+		t.Error(result)
+	}
+}
