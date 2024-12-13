@@ -44,21 +44,34 @@ func NewField(input string) (result Field) {
 
 func SolvePuzzle1(input string) int {
 	field := NewField(input)
-	path := field.simulateWalk()
+	path, _ := field.simulateWalk()
 	return len(path)
 }
 
-var direction = map[rune]struct {
-	row int
-	col int
-}{
-	'^': {row: -1, col: 0}, // up
-	'v': {row: 1, col: 0},  // down
-	'>': {row: 0, col: 1},  // right
-	'<': {row: 0, col: -1}, // left
+func SolvePuzzle2(input string) (result int) {
+	field := NewField(input)
+	path, _ := field.simulateWalk()
+
+	// remove the player position since we can't put an obstacle there
+	delete(path, field.currentPos)
+
+	for candidate := range path {
+		if field.simulateWithNewObstacle(candidate) {
+			result++
+		}
+	}
+	return result
 }
 
-func (f Field) simulateWalk() (result map[Coord][]rune) {
+func (f Field) simulateWithNewObstacle(newObstacle Coord) bool {
+	// set the new obstacle
+	f.obstacles = append(f.obstacles, newObstacle)
+
+	_, isLoop := f.simulateWalk()
+	return isLoop
+}
+
+func (f Field) simulateWalk() (result map[Coord][]rune, isLoop bool) {
 	result = map[Coord][]rune{}
 	// starting position needs to be there
 	result[f.currentPos] = []rune{f.direction}
@@ -77,10 +90,6 @@ func (f Field) simulateWalk() (result map[Coord][]rune) {
 				}
 			} else {
 				// collision turn right
-				f.currentPos = Coord{
-					row: f.currentPos.row,
-					col: f.currentPos.col + 1,
-				}
 				f.direction = '>'
 			}
 		case '>':
@@ -96,10 +105,6 @@ func (f Field) simulateWalk() (result map[Coord][]rune) {
 				}
 			} else {
 				// collision turn right
-				f.currentPos = Coord{
-					row: f.currentPos.row + 1,
-					col: f.currentPos.col,
-				}
 				f.direction = 'v'
 			}
 		case 'v':
@@ -115,10 +120,6 @@ func (f Field) simulateWalk() (result map[Coord][]rune) {
 				}
 			} else {
 				// collision turn right
-				f.currentPos = Coord{
-					row: f.currentPos.row,
-					col: f.currentPos.col - 1,
-				}
 				f.direction = '<'
 			}
 		case '<':
@@ -134,24 +135,22 @@ func (f Field) simulateWalk() (result map[Coord][]rune) {
 				}
 			} else {
 				// collision turn right
-				f.currentPos = Coord{
-					row: f.currentPos.row - 1,
-					col: f.currentPos.col,
-				}
 				f.direction = '^'
 			}
 		}
 
 		if f.currentPos.row < 0 || f.currentPos.row >= f.width || f.currentPos.col < 0 || f.currentPos.col >= f.height {
 			// Job's done - out of bounds
+			isLoop = false
 			return
 		}
 
 		if slices.Contains(result[f.currentPos], f.direction) {
 			// Job's done - closed the loop
+			isLoop = true
 			return
 		}
 
-		result[f.currentPos] = []rune{f.direction}
+		result[f.currentPos] = append(result[f.currentPos], f.direction)
 	}
 }
