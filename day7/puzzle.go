@@ -34,7 +34,20 @@ func SolvePuzzle1(input string) (result int) {
 	for _, eq := range eqs {
 		combs := make([]int, 0)
 		eq.CalculateCombinations(1, eq.Values[0], &combs)
-		fmt.Println(combs)
+		if slices.Contains(combs, eq.TestValue) {
+			result += eq.TestValue
+		}
+	}
+
+	return
+}
+
+func SolvePuzzle2(input string) (result int) {
+	eqs := NewEquations(input)
+
+	for _, eq := range eqs {
+		combs := make([]int, 0)
+		eq.CalculateCombinations2(1, eq.Values[0], &combs)
 		if slices.Contains(combs, eq.TestValue) {
 			result += eq.TestValue
 		}
@@ -54,4 +67,20 @@ func (eq Equation) CalculateCombinations(index int, current int, results *[]int)
 
 	// Multiply the current number
 	eq.CalculateCombinations(index+1, current*eq.Values[index], results)
+}
+
+func (eq Equation) CalculateCombinations2(index int, current int, results *[]int) {
+	if index == len(eq.Values) {
+		*results = append(*results, current)
+		return
+	}
+
+	// Add the current number
+	eq.CalculateCombinations2(index+1, current+eq.Values[index], results)
+
+	// Multiply the current number
+	eq.CalculateCombinations2(index+1, current*eq.Values[index], results)
+
+	// Concat with the rest
+	eq.CalculateCombinations2(index+1, util.StringToNum(fmt.Sprintf("%d%d", current, eq.Values[index])), results)
 }
